@@ -101,7 +101,10 @@ $('#name').blur((e) => {
 const emailInput = $('#mail');
 const emailLabel = $('label[for="mail"]');
 const emailError = $('<span> Please enter a valid email.</span>');
+const emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
 emailInput.on('input', (e) => {
-    const regex = /^[^@]+@[^@]+\.[a-z]+$/i;
-    validateActions(e, emailLabel, emailError, regex);
+    validateActions(e, emailLabel, emailError, emailRegex);
+})
+emailInput.blur((e) => {
+    validateActions(e, emailLabel, emailError, emailRegex);
 })
