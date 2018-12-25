@@ -179,3 +179,15 @@ button:hover {
 		width: 49%;
 	}
 }
+
+/* ================================= 
+  Error handling
+==================================== */
+
+.error {
+	border: 2px solid red;
+}
+
+label span {
+	color: darkred;
+}

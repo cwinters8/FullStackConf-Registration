@@ -64,3 +64,33 @@ designs.change((e) => {
         colorElementDisplay(false);
     }
 })
+
+/****************
+** VALIDATIONS **
+****************/
+
+// highlight given field in red
+function error(field, bool) {
+    if (bool) {
+        field.addClass('error');
+    } else {
+        field.removeClass('error');
+    }
+}
+
+// name
+const nameLabel = $('label[for="name"]');
+const nameError = $('<span> Please enter a name.</span>');
+$('#name').blur((e) => {
+    const regex = /\w+/;
+    if (!regex.test(e.target.value)) {
+        error($(e.target), true);
+        nameLabel.append(nameError);
+    } else {
+        error($(e.target), false);
+        nameError.remove();
+    }
+})
+$('#name').focus(() => {
+    nameError.remove();
+})
