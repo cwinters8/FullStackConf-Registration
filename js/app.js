@@ -15,3 +15,52 @@ titles.change((e) => {
         otherTitle.hide();
     }
 })
+
+const tshirtColorLabel = $("label[for='color']");
+const tshirtColorSelect = $('#color');
+// function to show or hide tshirt color elements
+function colorElementDisplay(bool) {
+    if (bool) {
+        tshirtColorLabel.show();
+        tshirtColorSelect.show();
+    } else {
+        tshirtColorLabel.hide();
+        tshirtColorSelect.hide();
+    }
+}
+
+// initially hide t-shirt color label and input
+colorElementDisplay(false);
+
+const designs = $('#design');
+const colors = $('#color option');
+// displays appropriate colors based on regex input
+function colorOptionDisplay(regex) {
+    const matchedColors = [];
+    colorElementDisplay(true);
+    const selected = $('#color option[selected="selected"]');
+    selected.removeAttr('selected');
+    colors.each((i) => {
+        const color = $(colors[i]);
+        color.detach();
+        if (regex.test(color.text())) {
+            color.appendTo('#color');
+            matchedColors.push(color);
+        }
+    })
+    // set first option as default
+    matchedColors[0].attr('selected', 'selected');
+}
+
+// show appropriate colors when a design is selected
+designs.change((e) => {
+    if (e.target.value === 'js puns') {
+        colorElementDisplay(true);
+        colorOptionDisplay(/.*JS Puns.*/);
+    } else if (e.target.value === 'heart js') {
+        colorElementDisplay(true);
+        colorOptionDisplay(/.*I ♥ JS.*/);
+    } else {
+        colorElementDisplay(false);
+    }
+})
