@@ -78,19 +78,30 @@ function error(field, bool) {
     }
 }
 
+// execute error and append functions based on regex tests
+function validateActions(event, label, err, regex) {
+    if (!regex.test(event.target.value)) {
+        error($(event.target), true);
+        label.append(err);
+    } else {
+        error($(event.target), false);
+        err.remove();
+    }
+}
+
 // name
 const nameLabel = $('label[for="name"]');
 const nameError = $('<span> Please enter a name.</span>');
 $('#name').blur((e) => {
     const regex = /\w+/;
-    if (!regex.test(e.target.value)) {
-        error($(e.target), true);
-        nameLabel.append(nameError);
-    } else {
-        error($(e.target), false);
-        nameError.remove();
-    }
+    validateActions(e, nameLabel, nameError, regex);
 })
-$('#name').focus(() => {
-    nameError.remove();
+
+// email
+const emailInput = $('#mail');
+const emailLabel = $('label[for="mail"]');
+const emailError = $('<span> Please enter a valid email.</span>');
+emailInput.on('input', (e) => {
+    const regex = /^[^@]+@[^@]+\.[a-z]+$/i;
+    validateActions(e, emailLabel, emailError, regex);
 })
