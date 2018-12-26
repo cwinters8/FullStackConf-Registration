@@ -3,6 +3,15 @@ $(document).ready(() => {
     $('#name').focus();
 })
 
+// object to track if all validations are passing
+const validations = {
+    name: false,
+    email: false,
+    tshirt: false,
+    activities: false,
+    payment: false
+}
+
 // only display other-title input if 'Other' job role is selected
 const titles = $('#title');
 const otherTitle = $('#other-title');
@@ -83,9 +92,11 @@ function validateActions(event, label, err, regex) {
     if (!regex.test(event.target.value)) {
         error($(event.target), true);
         label.append(err);
+        return false;
     } else {
         error($(event.target), false);
         err.remove();
+        return true;
     }
 }
 
@@ -94,7 +105,8 @@ const nameLabel = $('label[for="name"]');
 const nameError = $('<span> Please enter a name.</span>');
 $('#name').blur((e) => {
     const regex = /\w+/;
-    validateActions(e, nameLabel, nameError, regex);
+    const check = validateActions(e, nameLabel, nameError, regex);
+    validations.name = check;
 })
 
 // email
@@ -106,5 +118,32 @@ emailInput.on('input', (e) => {
     validateActions(e, emailLabel, emailError, emailRegex);
 })
 emailInput.blur((e) => {
-    validateActions(e, emailLabel, emailError, emailRegex);
+    const check = validateActions(e, emailLabel, emailError, emailRegex);
+    validations.email = check;
 })
+
+// activities
+const activities = $('.activities input');
+const checked = [];
+// attach a listener to each activity checkbox
+for (let i = 0; i < activities.length; i++) {
+    const activity = activities[i];
+    // add and remove activities from the checked array
+    $(activity).change((e) => {
+        if ($(e.target).prop('checked')) {
+            checked.push(e.target.name);
+        } else {
+            for (let j = 0; j < checked.length; j++) {
+                if (checked[j] === e.target.name) {
+                    checked.splice(j, 1);
+                }
+            }
+        }
+        // change activities value in validations object based on whether any boxes are checked
+        if (checked.length > 0) {
+            validations.activities = true;
+        } else {
+            validations.activities = false;
+        }
+    })
+}
