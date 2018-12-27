@@ -150,43 +150,41 @@ function costs(activity, operator) {
 }
 
 // TO-DO: remove hardcoded activity data and extract from text with regex
-const tuesNineAm = [
-    $('input[name="js-frameworks"]'),
-    $('input[name="express"]')
-]
-const tuesOnePm = [
-    $('input[name="js-libs"]'),
-    $('input[name="node"]')
-]
+// const tuesNineAm = [
+//     $('input[name="js-frameworks"]'),
+//     $('input[name="express"]')
+// ]
+// const tuesOnePm = [
+//     $('input[name="js-libs"]'),
+//     $('input[name="node"]')
+// ]
 // grey out conflicting activity times, or re-enable if unchecked
 function conflict(activity, checked) {
-    const name = activity.attr('name');
-    let timeArray;
-    if (name === 'js-frameworks' || name === 'express') {
-        timeArray = tuesNineAm;
-    } else if (name === 'js-libs' || name === 'node') {
-        timeArray = tuesOnePm;
-    } else {
-        return;
+    // const name = activity.attr('name');
+    const regex = / — ([^$].+),/;
+    const targetText = activity.parent().text();
+    let targetTime = targetText.match(regex);
+    if (targetTime) {
+        targetTime = targetTime[1];
     }
-    if (checked) {
-        for (let i = 0; i < timeArray.length; i++) {
-            if (timeArray[i].attr('name') === name) {
-                timeArray.splice(i,1);
-                // loop through the updated array and disable the inputs
-                for (let i = 0; i < timeArray.length; i++) {
-                    timeArray[i].attr('disabled', 'disabled');
-                    timeArray[i].parent().addClass('conflict');
+    const labels = $('.activities label');
+    // loop through labels and find any matching times
+    for (let i = 0; i < labels.length; i++) {
+        let text = labels[i].innerText;
+        let time = text.match(regex);
+        if (time) {
+            time = time[1];
+            if (time === targetTime && text !== targetText) {
+                if (checked) {
+                    $($(labels[i]).children()[0]).attr('disabled', 'disabled');
+                    $(labels[i]).addClass('conflict');
+                } else {
+                    $($(labels[i]).children()[0]).removeAttr('disabled');
+                    $(labels[i]).removeClass('conflict')
                 }
+                
             }
         }
-    } else {
-        // loop through timeArray and re-enable activities
-        for (let i = 0; i < timeArray.length; i++) {
-            timeArray[i].removeAttr('disabled');
-            timeArray[i].parent().removeClass('conflict');
-        }
-        timeArray.push(activity);
     }
 }
 
