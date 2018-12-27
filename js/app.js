@@ -149,15 +149,6 @@ function costs(activity, operator) {
     costSpan.text(totalCost);
 }
 
-// TO-DO: remove hardcoded activity data and extract from text with regex
-// const tuesNineAm = [
-//     $('input[name="js-frameworks"]'),
-//     $('input[name="express"]')
-// ]
-// const tuesOnePm = [
-//     $('input[name="js-libs"]'),
-//     $('input[name="node"]')
-// ]
 // grey out conflicting activity times, or re-enable if unchecked
 function conflict(activity, checked) {
     // const name = activity.attr('name');
