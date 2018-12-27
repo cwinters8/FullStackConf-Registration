@@ -124,6 +124,47 @@ emailInput.blur((e) => {
 
 // activities
 const activities = $('.activities input');
+const tuesNineAm = [
+    $('input[name="js-frameworks"]'),
+    $('input[name="express"]')
+]
+const tuesOnePm = [
+    $('input[name="js-libs"]'),
+    $('input[name="node"]')
+]
+
+// grey out conflicting activity times, or re-enable if unchecked
+function conflict(activity, checked) {
+    const name = activity.attr('name');
+    let timeArray;
+    if (name === 'js-frameworks' || name === 'express') {
+        timeArray = tuesNineAm;
+    } else if (name === 'js-libs' || name === 'node') {
+        timeArray = tuesOnePm;
+    } else {
+        return;
+    }
+    if (checked) {
+        for (let i = 0; i < timeArray.length; i++) {
+            if (timeArray[i].attr('name') === name) {
+                timeArray.splice(i,1);
+                // loop through the updated array and disable the inputs
+                for (let i = 0; i < timeArray.length; i++) {
+                    timeArray[i].attr('disabled', 'disabled');
+                    timeArray[i].parent().addClass('conflict');
+                }
+            }
+        }
+    } else {
+        // loop through timeArray and re-enable activities
+        for (let i = 0; i < timeArray.length; i++) {
+            timeArray[i].removeAttr('disabled');
+            timeArray[i].parent().removeClass('conflict');
+        }
+        timeArray.push(activity);
+    }
+}
+
 const checked = [];
 // attach a listener to each activity checkbox
 for (let i = 0; i < activities.length; i++) {
@@ -132,7 +173,9 @@ for (let i = 0; i < activities.length; i++) {
     $(activity).change((e) => {
         if ($(e.target).prop('checked')) {
             checked.push(e.target.name);
+            conflict($(e.target), true);
         } else {
+            conflict($(e.target), false);
             for (let j = 0; j < checked.length; j++) {
                 if (checked[j] === e.target.name) {
                     checked.splice(j, 1);
@@ -147,3 +190,8 @@ for (let i = 0; i < activities.length; i++) {
         }
     })
 }
+
+// payment method handling
+
+
+// validate all fields on submit and show errors where necessary

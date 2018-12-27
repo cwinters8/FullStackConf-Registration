@@ -181,7 +181,7 @@ button:hover {
 }
 
 /* ================================= 
-  Error handling
+  Validation handling
 ==================================== */
 
 .error {
@@ -190,4 +190,8 @@ button:hover {
 
 label span {
 	color: darkred;
+}
+
+.conflict {
+	color: grey;
 }
