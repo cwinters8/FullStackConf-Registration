@@ -124,6 +124,32 @@ emailInput.blur((e) => {
 
 // activities
 const activities = $('.activities input');
+
+// add a cost section to activities fieldset
+const activitiesFieldset = $('.activities');
+const costDiv = $('<div id="cost">Total Cost: $</div>');
+const costSpan = $('<span></span>');
+let totalCost = 0;
+activitiesFieldset.append(costDiv);
+costDiv.append(costSpan);
+costSpan.text(totalCost);
+
+// add or subtract from the total cost
+function costs(activity, operator) {
+    let label = activity.parent();
+    const regex = / \$/;
+    label = label.text().split(regex);
+    let activityCost = label[label.length - 1];
+    activityCost = parseInt(activityCost);
+    if (operator === 'add') {
+        totalCost += activityCost;
+    } else {
+        totalCost -= activityCost;
+    }
+    costSpan.text(totalCost);
+}
+
+// TO-DO: remove hardcoded activity data and extract from text with regex
 const tuesNineAm = [
     $('input[name="js-frameworks"]'),
     $('input[name="express"]')
@@ -132,7 +158,6 @@ const tuesOnePm = [
     $('input[name="js-libs"]'),
     $('input[name="node"]')
 ]
-
 // grey out conflicting activity times, or re-enable if unchecked
 function conflict(activity, checked) {
     const name = activity.attr('name');
@@ -174,8 +199,10 @@ for (let i = 0; i < activities.length; i++) {
         if ($(e.target).prop('checked')) {
             checked.push(e.target.name);
             conflict($(e.target), true);
+            costs($(e.target), 'add');
         } else {
             conflict($(e.target), false);
+            costs($(e.target), 'subtract');
             for (let j = 0; j < checked.length; j++) {
                 if (checked[j] === e.target.name) {
                     checked.splice(j, 1);
