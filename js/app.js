@@ -74,6 +74,33 @@ designs.change((e) => {
     }
 })
 
+// handle payment method elements
+const payment = $('#payment');
+const creditCard = $('#credit-card');
+const paypal = $($('div:contains("PayPal option")')[1]);
+const bitcoin = $($('div:contains("Bitcoin option")')[1]);
+// remove 'select method' option
+$(payment.children()[0]).remove();
+// initially hide other payment method sections
+paypal.hide();
+bitcoin.hide();
+// only show selected payment method
+payment.change((e) => {
+    if (e.target.value === 'credit card') {
+        creditCard.show();
+        paypal.hide();
+        bitcoin.hide();
+    } else if (e.target.value === 'paypal') {
+        creditCard.hide();
+        paypal.show();
+        bitcoin.hide();
+    } else {
+        creditCard.hide();
+        paypal.hide();
+        bitcoin.show();
+    }
+})
+
 /****************
 ** VALIDATIONS **
 ****************/
@@ -207,7 +234,7 @@ for (let i = 0; i < activities.length; i++) {
     })
 }
 
-// payment method handling
+// credit card validation
 
 
 // validate all fields on submit and show errors where necessary
