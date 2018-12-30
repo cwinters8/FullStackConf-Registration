@@ -116,15 +116,14 @@ function error(field, bool) {
 
 // execute error and append functions based on regex tests
 function validateActions(event, label, err, regex) {
-    errSpan = $(`<span> ${err}</span>`);
     label.children().remove();
     if (!regex.test(event.target.value)) {
         error($(event.target), true);
-        label.append(errSpan);
+        label.append($(err));
         return false;
     } else {
         error($(event.target), false);
-        errSpan.remove();
+        $(err).remove();
         return true;
     }
 }
@@ -140,7 +139,7 @@ function removeFromArray(element, array) {
 
 // name
 const nameLabel = $('label[for="name"]');
-const nameError = 'Please enter a name.';
+const nameError = '<span> Please enter a name.</span>';
 const nameRegex = /\w+/;
 $('#name').on('input', (e) => {
     validateActions(e, nameLabel, nameError, nameRegex);
@@ -153,7 +152,7 @@ $('#name').blur((e) => {
 // email
 const emailInput = $('#mail');
 const emailLabel = $('label[for="mail"]');
-const emailError = 'Please enter a valid email.';
+const emailError = '<span> Please enter a valid email.</span>';
 const emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
 emailInput.on('input', (e) => {
     validateActions(e, emailLabel, emailError, emailRegex);
@@ -257,25 +256,51 @@ function ccPushOrPull(item, bool) {
     }
 }
 
-// add a floated div to append error messages to
-const ccErrorDiv = $('<div class="error-div"></div>');
+// add divs to append error messages to
 const cvvDiv = $($('div:contains("CVV:")')[2]);
-cvvDiv.after(ccErrorDiv);
+const ccNumErrorDiv = $('<div class="error-div"></div>');
+cvvDiv.after(ccNumErrorDiv);
+const ccZipErrorDiv = $('<div class="error-div"></div>');
+ccNumErrorDiv.after(ccZipErrorDiv);
+const cvvErrorDiv = $('<div class="error-div"></div>');
+ccZipErrorDiv.after(cvvErrorDiv);
 
 // CC number validation
 const ccNum = $('#cc-num');
 const ccNumRegex = /^\d{13,16}$/;
-const ccNumError = 'Please enter a valid credit card number';
+const ccNumError = '<p>Please enter a valid credit card number.</p>';
 ccNum.on('input', (e) => {
-    validateActions(e, ccErrorDiv, ccNumError, ccNumRegex);
+    validateActions(e, ccNumErrorDiv, ccNumError, ccNumRegex);
 })
 ccNum.blur((e) => {
-    const check = validateActions(e, ccErrorDiv, ccNumError, ccNumRegex);
+    const check = validateActions(e, ccNumErrorDiv, ccNumError, ccNumRegex);
     ccPushOrPull('CC Number', check);
 })
 
+// zip code validation
 const ccZip = $('#zip');
+const ccZipRegex = /^\d{5}$/;
+const ccZipError = '<p>Please enter a valid zip code.</p>'
+ccZip.on('input', (e) => {
+    validateActions(e, ccZipErrorDiv, ccZipError, ccZipRegex);
+})
+ccZip.blur((e) => {
+    const check = validateActions(e, ccZipErrorDiv, ccZipError, ccZipRegex);
+    ccPushOrPull('CC Zip', check);
+})
+
+// CVV validation
 const cvv = $('#cvv');
+const cvvRegex = /^\d{3}$/;
+const cvvError = '<p>Please enter a valid CVV code.</p>'
+cvv.on('input', (e) => {
+    validateActions(e, cvvErrorDiv, cvvError, cvvRegex);
+})
+cvv.blur((e) => {
+    const check = validateActions(e, cvvErrorDiv, cvvError, cvvRegex);
+    ccPushOrPull('CVV', check);
+})
 
 // validate all fields on submit and show errors where necessary
+// check which payment method is selected
 // for credit card, check if the `invalidPayment` array is empty
