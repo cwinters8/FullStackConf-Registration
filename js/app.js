@@ -3,6 +3,15 @@ $(document).ready(() => {
     $('#name').focus();
 })
 
+// object to track if all validations are passing
+const validations = {
+    name: false,
+    email: false,
+    tshirt: false,
+    activities: false,
+    payment: false
+}
+
 // only display other-title input if 'Other' job role is selected
 const titles = $('#title');
 const otherTitle = $('#other-title');
@@ -23,9 +32,11 @@ function colorElementDisplay(bool) {
     if (bool) {
         tshirtColorLabel.show();
         tshirtColorSelect.show();
+        validations.tshirt = true;
     } else {
         tshirtColorLabel.hide();
         tshirtColorSelect.hide();
+        validations.tshirt = false;
     }
 }
 
@@ -55,10 +66,8 @@ function colorOptionDisplay(regex) {
 // show appropriate colors when a design is selected
 designs.change((e) => {
     if (e.target.value === 'js puns') {
-        colorElementDisplay(true);
         colorOptionDisplay(/.*JS Puns.*/);
     } else if (e.target.value === 'heart js') {
-        colorElementDisplay(true);
         colorOptionDisplay(/.*I ♥ JS.*/);
     } else {
         colorElementDisplay(false);
@@ -95,15 +104,6 @@ payment.change((e) => {
 /****************
 ** VALIDATIONS **
 ****************/
-
-// object to track if all validations are passing
-const validations = {
-    name: false,
-    email: false,
-    tshirt: false,
-    activities: false,
-    payment: false
-}
 
 // highlight a given field in red
 function error(field, bool) {
@@ -302,5 +302,6 @@ cvv.blur((e) => {
 })
 
 // validate all fields on submit and show errors where necessary
+// verify a t-shirt is selected
 // check which payment method is selected
 // for credit card, check if the `invalidPayment` array is empty
