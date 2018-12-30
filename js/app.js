@@ -248,6 +248,14 @@ for (let i = 0; i < activities.length; i++) {
 
 // track if any CC validations are returning false
 let invalidPayment = [];
+// push or pull from invalidPayment array as needed
+function ccPushOrPull(item, bool) {
+    if (!bool) {
+        invalidPayment.push(item);
+    } else {
+        invalidPayment = removeFromArray(item, invalidPayment);
+    }
+}
 
 // add a floated div to append error messages to
 const ccErrorDiv = $('<div class="error-div"></div>');
@@ -263,11 +271,7 @@ ccNum.on('input', (e) => {
 })
 ccNum.blur((e) => {
     const check = validateActions(e, ccErrorDiv, ccNumError, ccNumRegex);
-    if (!check) {
-        invalidPayment.push('CC Number');
-    } else {
-        invalidPayment = removeFromArray('CC Number', invalidPayment);
-    }
+    ccPushOrPull('CC Number', check);
 })
 
 const ccZip = $('#zip');
