@@ -3,15 +3,6 @@ $(document).ready(() => {
     $('#name').focus();
 })
 
-// object to track if all validations are passing
-const validations = {
-    name: false,
-    email: false,
-    tshirt: false,
-    activities: false,
-    payment: false
-}
-
 // only display other-title input if 'Other' job role is selected
 const titles = $('#title');
 const otherTitle = $('#other-title');
@@ -105,7 +96,16 @@ payment.change((e) => {
 ** VALIDATIONS **
 ****************/
 
-// highlight given field in red
+// object to track if all validations are passing
+const validations = {
+    name: false,
+    email: false,
+    tshirt: false,
+    activities: false,
+    payment: false
+}
+
+// highlight a given field in red
 function error(field, bool) {
     if (bool) {
         field.addClass('error');
@@ -116,30 +116,44 @@ function error(field, bool) {
 
 // execute error and append functions based on regex tests
 function validateActions(event, label, err, regex) {
+    errSpan = $(`<span> ${err}</span>`);
+    label.children().remove();
     if (!regex.test(event.target.value)) {
         error($(event.target), true);
-        label.append(err);
+        label.append(errSpan);
         return false;
     } else {
         error($(event.target), false);
-        err.remove();
+        errSpan.remove();
         return true;
     }
 }
 
+// remove one or more elements from an array if there is a match
+function removeFromArray(element, array) {
+    while (array.indexOf(element) !== -1) {
+        const index = array.indexOf(element);
+        array.splice(index, 1);
+    }
+    return array;
+}
+
 // name
 const nameLabel = $('label[for="name"]');
-const nameError = $('<span> Please enter a name.</span>');
+const nameError = 'Please enter a name.';
+const nameRegex = /\w+/;
+$('#name').on('input', (e) => {
+    validateActions(e, nameLabel, nameError, nameRegex);
+})
 $('#name').blur((e) => {
-    const regex = /\w+/;
-    const check = validateActions(e, nameLabel, nameError, regex);
+    const check = validateActions(e, nameLabel, nameError, nameRegex);
     validations.name = check;
 })
 
 // email
 const emailInput = $('#mail');
 const emailLabel = $('label[for="mail"]');
-const emailError = $('<span> Please enter a valid email.</span>');
+const emailError = 'Please enter a valid email.';
 const emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
 emailInput.on('input', (e) => {
     validateActions(e, emailLabel, emailError, emailRegex);
@@ -206,7 +220,7 @@ function conflict(activity, checked) {
     }
 }
 
-const checked = [];
+let checked = [];
 // attach a listener to each activity checkbox
 for (let i = 0; i < activities.length; i++) {
     const activity = activities[i];
@@ -219,11 +233,7 @@ for (let i = 0; i < activities.length; i++) {
         } else {
             conflict($(e.target), false);
             costs($(e.target), 'subtract');
-            for (let j = 0; j < checked.length; j++) {
-                if (checked[j] === e.target.name) {
-                    checked.splice(j, 1);
-                }
-            }
+            checked = removeFromArray(e.target.name, checked);
         }
         // change activities value in validations object based on whether any boxes are checked
         if (checked.length > 0) {
@@ -236,5 +246,32 @@ for (let i = 0; i < activities.length; i++) {
 
 // credit card validation
 
+// track if any CC validations are returning false
+let invalidPayment = [];
+
+// add a floated div to append error messages to
+const ccErrorDiv = $('<div class="error-div"></div>');
+const cvvDiv = $($('div:contains("CVV:")')[2]);
+cvvDiv.after(ccErrorDiv);
+
+// CC number validation
+const ccNum = $('#cc-num');
+const ccNumRegex = /^\d{13,16}$/;
+const ccNumError = 'Please enter a valid credit card number';
+ccNum.on('input', (e) => {
+    validateActions(e, ccErrorDiv, ccNumError, ccNumRegex);
+})
+ccNum.blur((e) => {
+    const check = validateActions(e, ccErrorDiv, ccNumError, ccNumRegex);
+    if (!check) {
+        invalidPayment.push('CC Number');
+    } else {
+        invalidPayment = removeFromArray('CC Number', invalidPayment);
+    }
+})
+
+const ccZip = $('#zip');
+const cvv = $('#cvv');
 
 // validate all fields on submit and show errors where necessary
+// for credit card, check if the `invalidPayment` array is empty
