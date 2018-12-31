@@ -66,11 +66,14 @@ function colorOptionDisplay(regex) {
 }
 
 // show appropriate colors when a design is selected
+const tshirtError = $('<p class="error">Please select a t-shirt.</p>');
 designs.change((e) => {
     if (e.target.value === 'js puns') {
         colorOptionDisplay(/.*JS Puns.*/);
+        tshirtError.remove();
     } else if (e.target.value === 'heart js') {
         colorOptionDisplay(/.*I ♥ JS.*/);
+        tshirtError.remove();
     } else {
         colorElementDisplay(false);
     }
@@ -110,9 +113,9 @@ payment.change((e) => {
 // highlight a given field in red
 function error(field, bool) {
     if (bool) {
-        field.addClass('error');
+        field.addClass('error-highlight');
     } else {
-        field.removeClass('error');
+        field.removeClass('error-highlight');
     }
 }
 
@@ -222,6 +225,7 @@ function conflict(activity, checked) {
 }
 
 let checked = [];
+const activitiesError = $('<p class="error">Please select at least one activity.</p>');
 // attach a listener to each activity checkbox
 for (let i = 0; i < activities.length; i++) {
     const activity = activities[i];
@@ -239,6 +243,7 @@ for (let i = 0; i < activities.length; i++) {
         // change activities value in validations object based on whether any boxes are checked
         if (checked.length > 0) {
             validations.activities = true;
+            activitiesError.remove();
         } else {
             validations.activities = false;
         }
@@ -249,11 +254,11 @@ for (let i = 0; i < activities.length; i++) {
 
 // add divs to append error messages to
 const cvvDiv = $($('div:contains("CVV:")')[2]);
-const ccNumErrorDiv = $('<div class="error-div"></div>');
+const ccNumErrorDiv = $('<div class="error"></div>');
 cvvDiv.after(ccNumErrorDiv);
-const ccZipErrorDiv = $('<div class="error-div"></div>');
+const ccZipErrorDiv = $('<div class="error"></div>');
 ccNumErrorDiv.after(ccZipErrorDiv);
-const cvvErrorDiv = $('<div class="error-div"></div>');
+const cvvErrorDiv = $('<div class="error"></div>');
 ccZipErrorDiv.after(cvvErrorDiv);
 
 // CC number validation
@@ -297,7 +302,6 @@ $('button').click((e) => {
     // check input fields by executing their blur events
     name.blur();
     emailInput.blur();
-    
     if (payment.val() === 'credit card') {
         ccNum.blur();
         ccZip.blur();
@@ -308,7 +312,25 @@ $('button').click((e) => {
         validations.ccZip = true;
         validations.cvv = true;
     }
-    console.log(validations);
-
-    e.preventDefault();
+    const validationsValues = Object.values(validations);
+    let failed;
+    for (let i = 0; i < validationsValues.length; i++) {
+        if (!validationsValues[i]) {
+            failed = true;
+            break;
+        }
+    }
+    if (failed) {
+        if (!validations.tshirt) {
+            $('legend:contains("T-Shirt Info")').after(tshirtError);
+        }
+        if (!validations.activities) {
+            $('legend:contains("Register for Activities")').after(activitiesError);
+        }
+        e.preventDefault();
+        alert('Please fix the errors on the page, then resubmit.')
+    } else {
+        alert('Registration submitted successfully!')
+    }
+    
 })

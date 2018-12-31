@@ -184,14 +184,15 @@ button:hover {
   Validation handling
 ==================================== */
 
-.error {
+.error-highlight {
 	border: 2px solid red;
 }
 
-.error-div {
+.error {
 	color: darkred;
 	width: auto;
 	height: auto;
+	margin-top: 0;
 }
 
 label span {
