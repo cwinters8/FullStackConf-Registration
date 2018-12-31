@@ -9,7 +9,9 @@ const validations = {
     email: false,
     tshirt: false,
     activities: false,
-    payment: false
+    ccNum: false,
+    ccZip: false,
+    cvv: false
 }
 
 // only display other-title input if 'Other' job role is selected
@@ -117,15 +119,23 @@ function error(field, bool) {
 // execute error and append functions based on regex tests
 function validateActions(event, label, err, regex) {
     label.children().remove();
-    if (!regex.test(event.target.value)) {
-        error($(event.target), true);
+    if (!regex.test(event.val())) {
+        error(event, true);
         label.append($(err));
         return false;
     } else {
-        error($(event.target), false);
+        error(event, false);
         $(err).remove();
         return true;
     }
+}
+
+// execute all validations at once
+function validateAll() {
+    // name
+    validateActions($('#name'), nameLabel, nameError, nameRegex);
+    // email
+    validateActions($(emailInput), emailLabel, emailError, emailRegex);
 }
 
 // remove one or more elements from an array if there is a match
@@ -142,10 +152,10 @@ const nameLabel = $('label[for="name"]');
 const nameError = '<span> Please enter a name.</span>';
 const nameRegex = /\w+/;
 $('#name').on('input', (e) => {
-    validateActions(e, nameLabel, nameError, nameRegex);
+    validateActions($(e.target), nameLabel, nameError, nameRegex);
 })
 $('#name').blur((e) => {
-    const check = validateActions(e, nameLabel, nameError, nameRegex);
+    const check = validateActions($(e.target), nameLabel, nameError, nameRegex);
     validations.name = check;
 })
 
@@ -155,10 +165,10 @@ const emailLabel = $('label[for="mail"]');
 const emailError = '<span> Please enter a valid email.</span>';
 const emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
 emailInput.on('input', (e) => {
-    validateActions(e, emailLabel, emailError, emailRegex);
+    validateActions($(e.target), emailLabel, emailError, emailRegex);
 })
 emailInput.blur((e) => {
-    const check = validateActions(e, emailLabel, emailError, emailRegex);
+    const check = validateActions($(e.target), emailLabel, emailError, emailRegex);
     validations.email = check;
 })
 
@@ -245,17 +255,6 @@ for (let i = 0; i < activities.length; i++) {
 
 // credit card validation
 
-// track if any CC validations are returning false
-let invalidPayment = [];
-// push or pull from invalidPayment array as needed
-function ccPushOrPull(item, bool) {
-    if (!bool) {
-        invalidPayment.push(item);
-    } else {
-        invalidPayment = removeFromArray(item, invalidPayment);
-    }
-}
-
 // add divs to append error messages to
 const cvvDiv = $($('div:contains("CVV:")')[2]);
 const ccNumErrorDiv = $('<div class="error-div"></div>');
@@ -270,11 +269,11 @@ const ccNum = $('#cc-num');
 const ccNumRegex = /^\d{13,16}$/;
 const ccNumError = '<p>Please enter a valid credit card number.</p>';
 ccNum.on('input', (e) => {
-    validateActions(e, ccNumErrorDiv, ccNumError, ccNumRegex);
+    validateActions($(e.target), ccNumErrorDiv, ccNumError, ccNumRegex);
 })
 ccNum.blur((e) => {
-    const check = validateActions(e, ccNumErrorDiv, ccNumError, ccNumRegex);
-    ccPushOrPull('CC Number', check);
+    const check = validateActions($(e.target), ccNumErrorDiv, ccNumError, ccNumRegex);
+    validations.ccNum = check;
 })
 
 // zip code validation
@@ -282,11 +281,11 @@ const ccZip = $('#zip');
 const ccZipRegex = /^\d{5}$/;
 const ccZipError = '<p>Please enter a valid zip code.</p>'
 ccZip.on('input', (e) => {
-    validateActions(e, ccZipErrorDiv, ccZipError, ccZipRegex);
+    validateActions($(e.target), ccZipErrorDiv, ccZipError, ccZipRegex);
 })
 ccZip.blur((e) => {
-    const check = validateActions(e, ccZipErrorDiv, ccZipError, ccZipRegex);
-    ccPushOrPull('CC Zip', check);
+    const check = validateActions($(e.target), ccZipErrorDiv, ccZipError, ccZipRegex);
+    validations.ccZip = check;
 })
 
 // CVV validation
@@ -294,14 +293,18 @@ const cvv = $('#cvv');
 const cvvRegex = /^\d{3}$/;
 const cvvError = '<p>Please enter a valid CVV code.</p>'
 cvv.on('input', (e) => {
-    validateActions(e, cvvErrorDiv, cvvError, cvvRegex);
+    validateActions($(e.target), cvvErrorDiv, cvvError, cvvRegex);
 })
 cvv.blur((e) => {
-    const check = validateActions(e, cvvErrorDiv, cvvError, cvvRegex);
-    ccPushOrPull('CVV', check);
+    const check = validateActions($(e.target), cvvErrorDiv, cvvError, cvvRegex);
+    validations.cvv = check;
 })
 
 // validate all fields on submit and show errors where necessary
-// verify a t-shirt is selected
-// check which payment method is selected
-// for credit card, check if the `invalidPayment` array is empty
+$('button').click((e) => {
+    // execute all validation checks, if any false values in object
+
+    // only need to check CC if payment.val() === credit card
+
+    e.preventDefault();
+})
