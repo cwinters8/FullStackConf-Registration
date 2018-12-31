@@ -3,6 +3,38 @@ $(document).ready(() => {
     $('#name').focus();
 })
 
+// highlight a given field in red
+function error(field, bool) {
+    if (bool) {
+        field.addClass('error-highlight');
+    } else {
+        field.removeClass('error-highlight');
+    }
+}
+
+// execute error and append functions based on regex tests
+function validateActions(target, label, err, regex) {
+    label.children().remove();
+    if (!regex.test(target.val())) {
+        error(target, true);
+        label.append($(err));
+        return false;
+    } else {
+        error(target, false);
+        $(err).remove();
+        return true;
+    }
+}
+
+// remove one or more elements from an array if there is a match
+function removeFromArray(element, array) {
+    while (array.indexOf(element) !== -1) {
+        const index = array.indexOf(element);
+        array.splice(index, 1);
+    }
+    return array;
+}
+
 // object to track if all validations are passing
 const validations = {
     name: false,
@@ -14,6 +46,50 @@ const validations = {
     cvv: false
 }
 
+/****************
+***** NAME *****
+****************/
+const name = $('#name');
+const nameLabel = $('label[for="name"]');
+const nameError = '<span> Please enter a name.</span>';
+const nameRegex = /\w+/;
+name.on('input', (e) => {
+    validateActions($(e.target), nameLabel, nameError, nameRegex);
+})
+name.blur((e) => {
+    const check = validateActions($(e.target), nameLabel, nameError, nameRegex);
+    validations.name = check;
+})
+
+/****************
+***** EMAIL *****
+****************/
+const emailInput = $('#mail');
+const emailLabel = $('label[for="mail"]');
+let emailError;
+let emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
+// pick an email error
+function chooseEmailError(target) {
+    if (target) {
+        return '<span> Please enter a valid email address.</span>';
+    } else {
+        return '<span> Please enter an email address.</span>';
+    }
+}
+
+emailInput.on('input', (e) => {
+    emailError = chooseEmailError($(e.target).val());
+    validateActions($(e.target), emailLabel, emailError, emailRegex);
+})
+emailInput.blur((e) => {
+    emailError = chooseEmailError($(e.target).val());
+    const check = validateActions($(e.target), emailLabel, emailError, emailRegex);
+    validations.email = check;
+})
+
+/****************
+*** JOB ROLE ***
+****************/
 // only display other-title input if 'Other' job role is selected
 const titles = $('#title');
 const otherTitle = $('#other-title');
@@ -27,6 +103,9 @@ titles.change((e) => {
     }
 })
 
+/****************
+**** T-SHIRT ****
+****************/
 const tshirtColorLabel = $("label[for='color']");
 const tshirtColorSelect = $('#color');
 // function to show or hide tshirt color elements
@@ -79,107 +158,9 @@ designs.change((e) => {
     }
 })
 
-// handle payment method elements
-const payment = $('#payment');
-const creditCard = $('#credit-card');
-const paypal = $($('div:contains("PayPal option")')[1]);
-const bitcoin = $($('div:contains("Bitcoin option")')[1]);
-// remove 'select method' option
-$(payment.children()[0]).remove();
-// initially hide other payment method sections
-paypal.hide();
-bitcoin.hide();
-// only show selected payment method
-payment.change((e) => {
-    if (e.target.value === 'credit card') {
-        creditCard.show();
-        paypal.hide();
-        bitcoin.hide();
-    } else if (e.target.value === 'paypal') {
-        creditCard.hide();
-        paypal.show();
-        bitcoin.hide();
-    } else {
-        creditCard.hide();
-        paypal.hide();
-        bitcoin.show();
-    }
-})
-
 /****************
-** VALIDATIONS **
+** ACTIVITIES **
 ****************/
-
-// highlight a given field in red
-function error(field, bool) {
-    if (bool) {
-        field.addClass('error-highlight');
-    } else {
-        field.removeClass('error-highlight');
-    }
-}
-
-// execute error and append functions based on regex tests
-function validateActions(target, label, err, regex) {
-    label.children().remove();
-    if (!regex.test(target.val())) {
-        error(target, true);
-        label.append($(err));
-        return false;
-    } else {
-        error(target, false);
-        $(err).remove();
-        return true;
-    }
-}
-
-// remove one or more elements from an array if there is a match
-function removeFromArray(element, array) {
-    while (array.indexOf(element) !== -1) {
-        const index = array.indexOf(element);
-        array.splice(index, 1);
-    }
-    return array;
-}
-
-// name
-const name = $('#name');
-const nameLabel = $('label[for="name"]');
-const nameError = '<span> Please enter a name.</span>';
-const nameRegex = /\w+/;
-name.on('input', (e) => {
-    validateActions($(e.target), nameLabel, nameError, nameRegex);
-})
-name.blur((e) => {
-    const check = validateActions($(e.target), nameLabel, nameError, nameRegex);
-    validations.name = check;
-})
-
-// email
-const emailInput = $('#mail');
-const emailLabel = $('label[for="mail"]');
-let emailError;
-let emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
-// pick an email error
-function chooseEmailError(target) {
-    if (target) {
-        return '<span> Please enter a valid email address.</span>';
-    } else {
-        return '<span> Please enter an email address.</span>';
-    }
-}
-
-emailInput.on('input', (e) => {
-    emailError = chooseEmailError($(e.target).val());
-    validateActions($(e.target), emailLabel, emailError, emailRegex);
-})
-emailInput.blur((e) => {
-    emailError = chooseEmailError($(e.target).val());
-    const check = validateActions($(e.target), emailLabel, emailError, emailRegex);
-    validations.email = check;
-})
-
-// activities
 const activities = $('.activities input');
 
 // add a cost section to activities fieldset
@@ -261,7 +242,34 @@ for (let i = 0; i < activities.length; i++) {
     })
 }
 
-// credit card validation
+/****************
+**** PAYMENT ****
+****************/
+const payment = $('#payment');
+const creditCard = $('#credit-card');
+const paypal = $($('div:contains("PayPal option")')[1]);
+const bitcoin = $($('div:contains("Bitcoin option")')[1]);
+// remove 'select method' option
+$(payment.children()[0]).remove();
+// initially hide other payment method sections
+paypal.hide();
+bitcoin.hide();
+// only show selected payment method
+payment.change((e) => {
+    if (e.target.value === 'credit card') {
+        creditCard.show();
+        paypal.hide();
+        bitcoin.hide();
+    } else if (e.target.value === 'paypal') {
+        creditCard.hide();
+        paypal.show();
+        bitcoin.hide();
+    } else {
+        creditCard.hide();
+        paypal.hide();
+        bitcoin.show();
+    }
+})
 
 // add divs to append error messages to
 const cvvDiv = $($('div:contains("CVV:")')[2]);
@@ -308,7 +316,9 @@ cvv.blur((e) => {
     validations.cvv = check;
 })
 
-// validate all fields on submit
+/****************
+**** SUBMIT ****
+****************/
 $('button').click((e) => {
     // check input fields by executing their blur events
     name.blur();
