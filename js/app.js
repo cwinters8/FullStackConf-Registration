@@ -158,12 +158,23 @@ name.blur((e) => {
 // email
 const emailInput = $('#mail');
 const emailLabel = $('label[for="mail"]');
-const emailError = '<span> Please enter a valid email.</span>';
-const emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
+let emailError;
+let emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
+// pick an email error
+function chooseEmailError(target) {
+    if (target) {
+        return '<span> Please enter a valid email address.</span>';
+    } else {
+        return '<span> Please enter an email address.</span>';
+    }
+}
+
 emailInput.on('input', (e) => {
+    emailError = chooseEmailError($(e.target).val());
     validateActions($(e.target), emailLabel, emailError, emailRegex);
 })
 emailInput.blur((e) => {
+    emailError = chooseEmailError($(e.target).val());
     const check = validateActions($(e.target), emailLabel, emailError, emailRegex);
     validations.email = check;
 })
@@ -328,9 +339,8 @@ $('button').click((e) => {
             $('legend:contains("Register for Activities")').after(activitiesError);
         }
         e.preventDefault();
-        alert('Please fix the errors on the page, then resubmit.')
+        alert('Please fix the errors on the page, then resubmit.');
     } else {
-        alert('Registration submitted successfully!')
+        alert('Registration submitted successfully!');
     }
-    
 })
