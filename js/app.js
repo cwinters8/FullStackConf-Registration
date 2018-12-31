@@ -117,25 +117,17 @@ function error(field, bool) {
 }
 
 // execute error and append functions based on regex tests
-function validateActions(event, label, err, regex) {
+function validateActions(target, label, err, regex) {
     label.children().remove();
-    if (!regex.test(event.val())) {
-        error(event, true);
+    if (!regex.test(target.val())) {
+        error(target, true);
         label.append($(err));
         return false;
     } else {
-        error(event, false);
+        error(target, false);
         $(err).remove();
         return true;
     }
-}
-
-// execute all validations at once
-function validateAll() {
-    // name
-    validateActions($('#name'), nameLabel, nameError, nameRegex);
-    // email
-    validateActions($(emailInput), emailLabel, emailError, emailRegex);
 }
 
 // remove one or more elements from an array if there is a match
@@ -148,13 +140,14 @@ function removeFromArray(element, array) {
 }
 
 // name
+const name = $('#name');
 const nameLabel = $('label[for="name"]');
 const nameError = '<span> Please enter a name.</span>';
 const nameRegex = /\w+/;
-$('#name').on('input', (e) => {
+name.on('input', (e) => {
     validateActions($(e.target), nameLabel, nameError, nameRegex);
 })
-$('#name').blur((e) => {
+name.blur((e) => {
     const check = validateActions($(e.target), nameLabel, nameError, nameRegex);
     validations.name = check;
 })
@@ -201,7 +194,6 @@ function costs(activity, operator) {
 
 // grey out conflicting activity times, or re-enable if unchecked
 function conflict(activity, checked) {
-    // const name = activity.attr('name');
     const regex = / — ([^$].+),/;
     const targetText = activity.parent().text();
     let targetTime = targetText.match(regex);
@@ -300,11 +292,23 @@ cvv.blur((e) => {
     validations.cvv = check;
 })
 
-// validate all fields on submit and show errors where necessary
+// validate all fields on submit
 $('button').click((e) => {
-    // execute all validation checks, if any false values in object
-
-    // only need to check CC if payment.val() === credit card
+    // check input fields by executing their blur events
+    name.blur();
+    emailInput.blur();
+    
+    if (payment.val() === 'credit card') {
+        ccNum.blur();
+        ccZip.blur();
+        cvv.blur();
+    } else {
+        // setting to true in order to bypass check if payment method is not a CC
+        validations.ccNum = true;
+        validations.ccZip = true;
+        validations.cvv = true;
+    }
+    console.log(validations);
 
     e.preventDefault();
 })
