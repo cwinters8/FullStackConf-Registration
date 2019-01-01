@@ -195,6 +195,10 @@ button:hover {
 	margin-top: 0;
 }
 
+.error p {
+	margin-top: 0;
+}
+
 label span {
 	color: darkred;
 }

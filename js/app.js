@@ -39,6 +39,7 @@ function removeFromArray(element, array) {
 const validations = {
     name: false,
     email: false,
+    jobRole: true,
     tshirt: false,
     activities: false,
     ccNum: false,
@@ -67,7 +68,7 @@ name.blur((e) => {
 const emailInput = $('#mail');
 const emailLabel = $('label[for="mail"]');
 let emailError;
-let emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
+const emailRegex = /^[^@]+@[^@]+\.[a-z]+$/i;
 // pick an email error
 function chooseEmailError(target) {
     if (target) {
@@ -90,17 +91,32 @@ emailInput.blur((e) => {
 /****************
 *** JOB ROLE ***
 ****************/
-// only display other-title input if 'Other' job role is selected
 const titles = $('#title');
 const otherTitle = $('#other-title');
+const otherError = '<p>Please enter your job role.</p>';
+const otherRegex = /\w+/;
+const otherErrorDiv = $('<div class="error"></div>');
+otherTitle.after(otherErrorDiv);
+
+// only display other-title input if 'Other' job role is selected
 otherTitle.hide();
 titles.change((e) => {
     if (e.target.value === 'other') {
         otherTitle.show();
         otherTitle.focus();
+        otherErrorDiv.show();
     } else {
         otherTitle.hide();
+        otherErrorDiv.hide();
     }
+})
+// validate the Other Job Role field
+otherTitle.on('input', (e) => {
+    validateActions($(e.target), otherErrorDiv, otherError, otherRegex);
+})
+otherTitle.blur((e) => {
+    const check = validateActions($(e.target), otherErrorDiv, otherError, otherRegex);
+    validations.jobRole = check;
 })
 
 /****************
@@ -332,6 +348,11 @@ $('button').click((e) => {
         validations.ccNum = true;
         validations.ccZip = true;
         validations.cvv = true;
+    }
+    if (titles.val() === 'other') {
+        otherTitle.blur();
+    } else {
+        validations.jobRole = true;
     }
     const validationsValues = Object.values(validations);
     let failed;
