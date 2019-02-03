@@ -1,7 +1,7 @@
 // focus on first form field when the page loads
 $(document).ready(() => {
     $('#name').focus();
-})
+});
 
 // highlight a given field in red
 function error(field, bool) {
@@ -45,7 +45,7 @@ const validations = {
     ccNum: false,
     ccZip: false,
     cvv: false
-}
+};
 
 /****************
 ***** NAME *****
@@ -56,11 +56,11 @@ const nameError = '<span> Please enter a name.</span>';
 const nameRegex = /\w+/;
 name.on('input', (e) => {
     validateActions($(e.target), nameLabel, nameError, nameRegex);
-})
+});
 name.blur((e) => {
     const check = validateActions($(e.target), nameLabel, nameError, nameRegex);
     validations.name = check;
-})
+});
 
 /****************
 ***** EMAIL *****
@@ -81,12 +81,12 @@ function chooseEmailError(target) {
 emailInput.on('input', (e) => {
     emailError = chooseEmailError($(e.target).val());
     validateActions($(e.target), emailLabel, emailError, emailRegex);
-})
+});
 emailInput.blur((e) => {
     emailError = chooseEmailError($(e.target).val());
     const check = validateActions($(e.target), emailLabel, emailError, emailRegex);
     validations.email = check;
-})
+});
 
 /****************
 *** JOB ROLE ***
@@ -109,15 +109,15 @@ titles.change((e) => {
         otherTitle.hide();
         otherErrorDiv.hide();
     }
-})
+});
 // validate the Other Job Role field
 otherTitle.on('input', (e) => {
     validateActions($(e.target), otherErrorDiv, otherError, otherRegex);
-})
+});
 otherTitle.blur((e) => {
     const check = validateActions($(e.target), otherErrorDiv, otherError, otherRegex);
     validations.jobRole = check;
-})
+});
 
 /****************
 **** T-SHIRT ****
@@ -155,7 +155,7 @@ function colorOptionDisplay(regex) {
             color.appendTo('#color');
             matchedColors.push(color);
         }
-    })
+    });
     // set first option as default
     matchedColors[0].attr('selected', 'selected');
 }
@@ -172,7 +172,7 @@ designs.change((e) => {
     } else {
         colorElementDisplay(false);
     }
-})
+});
 
 /****************
 ** ACTIVITIES **
@@ -224,7 +224,7 @@ function conflict(activity, checked) {
                     $(labels[i]).addClass('conflict');
                 } else {
                     $($(labels[i]).children()[0]).removeAttr('disabled');
-                    $(labels[i]).removeClass('conflict')
+                    $(labels[i]).removeClass('conflict');
                 }
                 
             }
@@ -255,7 +255,7 @@ for (let i = 0; i < activities.length; i++) {
         } else {
             validations.activities = false;
         }
-    })
+    });
 }
 
 /****************
@@ -285,7 +285,7 @@ payment.change((e) => {
         paypal.hide();
         bitcoin.show();
     }
-})
+});
 
 // add divs to append error messages to
 const cvvDiv = $($('div:contains("CVV:")')[2]);
@@ -302,35 +302,35 @@ const ccNumRegex = /^\d{13,16}$/;
 const ccNumError = '<p>Please enter a valid credit card number.</p>';
 ccNum.on('input', (e) => {
     validateActions($(e.target), ccNumErrorDiv, ccNumError, ccNumRegex);
-})
+});
 ccNum.blur((e) => {
     const check = validateActions($(e.target), ccNumErrorDiv, ccNumError, ccNumRegex);
     validations.ccNum = check;
-})
+});
 
 // zip code validation
 const ccZip = $('#zip');
 const ccZipRegex = /^\d{5}$/;
-const ccZipError = '<p>Please enter a valid zip code.</p>'
+const ccZipError = '<p>Please enter a valid zip code.</p>';
 ccZip.on('input', (e) => {
     validateActions($(e.target), ccZipErrorDiv, ccZipError, ccZipRegex);
-})
+});
 ccZip.blur((e) => {
     const check = validateActions($(e.target), ccZipErrorDiv, ccZipError, ccZipRegex);
     validations.ccZip = check;
-})
+});
 
 // CVV validation
 const cvv = $('#cvv');
 const cvvRegex = /^\d{3}$/;
-const cvvError = '<p>Please enter a valid CVV code.</p>'
+const cvvError = '<p>Please enter a valid CVV code.</p>';
 cvv.on('input', (e) => {
     validateActions($(e.target), cvvErrorDiv, cvvError, cvvRegex);
-})
+});
 cvv.blur((e) => {
     const check = validateActions($(e.target), cvvErrorDiv, cvvError, cvvRegex);
     validations.cvv = check;
-})
+});
 
 /****************
 **** SUBMIT ****
@@ -373,5 +373,7 @@ $('button').click((e) => {
         alert('Please fix the errors on the page, then resubmit.');
     } else {
         alert('Registration submitted successfully!');
+        e.preventDefault();
+        window.location = 'index.html';
     }
-})
+});
