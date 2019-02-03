@@ -1,7 +1,8 @@
-# Treehouse-FSJS-Project3
+# Full Stack Conf Registration
 Interactive form to register for "Full Stack Conf"
+
+Third project in the [Team Treehouse](http://referrals.trhou.se/clarkwinters) Full Stack JavaScript Techdegree.
 
 ## Future improvements
 - improved error message placement
-- update expiration years
-- validate expiration date
+- dynamically update expiration month and year options depending on current date
