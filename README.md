@@ -11,4 +11,5 @@ CSS
 
 ## Future Improvements
 - improved error message placement
-- dynamically update expiration month and year options depending on current date
+- dynamically update CC expiration year options depending on current date
+- validate CC expiration
