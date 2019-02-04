@@ -1,5 +1,5 @@
 # Full Stack Conf Registration
-Interactive form to register for "Full Stack Conf"
+Interactive form to register for 'Full Stack Conf', a fictional developer conference. This app utilizes jQuery and JavaScript to dynamically update certain areas of the form and validate user input.
 
 Third project in the [Team Treehouse](http://referrals.trhou.se/clarkwinters) Full Stack JavaScript Techdegree.
 
