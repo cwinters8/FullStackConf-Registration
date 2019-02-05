@@ -13,3 +13,6 @@ CSS
 - improved error message placement
 - dynamically update CC expiration year options depending on current date
 - validate CC expiration
+
+## Credits
+The majority of the HTML and CSS were provided by [Team Treehouse](https://teamtreehouse.com).
